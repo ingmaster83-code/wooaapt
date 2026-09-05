@@ -1,0 +1,118 @@
+---
+layout: default
+title: 우아아파트 - 전국 아파트 단지정보·관리비
+description: 전국 22,000여 개 아파트 단지의 세대수·사용승인일·난방방식 등 기본정보와 관리비를 한 곳에서 확인하세요.
+---
+
+<div class="hero" id="search">
+  <h1>우리 아파트,<br><span class="accent">얼마나 알고 계세요?</span></h1>
+  <p>전국 22,000여 개 아파트 단지의 기본정보와 관리비를<br>한 곳에서 무료로 확인하세요.</p>
+
+  <div class="search-wrap">
+    <input type="text" class="search-input" id="searchInput" placeholder="아파트 이름으로 검색 (예: 래미안, 자이, 푸르지오...)">
+    <button class="search-btn" id="searchBtn">🔍 검색</button>
+  </div>
+</div>
+
+<div id="search-results"></div>
+
+<div class="top-ad-bar">{% include ad.html %}</div>
+
+<div class="section" id="regionSection">
+  <h2 class="section-title">🗺️ 지역별로 찾기</h2>
+  <p class="section-sub">시도를 선택하면 시군구별 아파트 목록을 볼 수 있어요.</p>
+  <div class="region-grid">
+    {% assign dos = site.data.apt_by_do | sort %}
+    {% for pair in dos %}
+    <a class="region-btn" href="{{ '/region/' | relative_url }}{{ pair[0] }}/">
+      <span class="region-icon">📍</span>
+      {{ pair[0] }}
+      <div class="region-count">{{ pair[1].size }}개 단지</div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="section" style="padding-top:0;">
+  <div class="info-panel">
+    <h2>🏢 우아아파트는 이런 정보를 제공해요</h2>
+    <p style="color:var(--text-muted);">국토교통부 공동주택관리정보시스템(K-apt)의 공공데이터를 바탕으로, 전국 아파트 단지의 세대수·동수·사용승인일·난방방식·시공사 같은 기본정보와 관리비를 한 곳에서 찾아볼 수 있도록 정리하고 있습니다. 데이터는 매일 조금씩 채워지고 있어요.</p>
+  </div>
+</div>
+
+<div class="section" style="padding-top:0;">
+  <div class="tips-panel">
+    <h3>💡 Tips</h3>
+    <ul>
+      <li>같은 브랜드(래미안·자이·푸르지오 등)라도 단지마다 지역·세대수가 다르니 주소를 꼭 확인하세요.</li>
+      <li>검색이 잘 안 되면 단지명의 일부만 입력해보세요 (예: "래미안"만 검색).</li>
+      <li>기본정보가 "준비중"인 단지는 매일 순차적으로 업데이트되고 있어요.</li>
+    </ul>
+  </div>
+  <div class="faq-section">
+    <h2>자주 묻는 질문</h2>
+    <details>
+      <summary>모든 아파트 단지가 검색되나요?</summary>
+      <p>국토교통부 공동주택관리정보시스템(K-apt)에 등록된 전국 22,000여 개 공동주택 단지를 대상으로 합니다. 일부 소규모 단지는 등록 대상에서 제외될 수 있습니다.</p>
+    </details>
+    <details>
+      <summary>관리비 정보는 언제 볼 수 있나요?</summary>
+      <p>관리비 데이터는 순차적으로 추가하고 있어요. 먼저 확인이 필요하시면 K-apt 공식 사이트를 이용해주세요.</p>
+    </details>
+    <details>
+      <summary>파일이나 개인정보가 서버에 저장되나요?</summary>
+      <p>아니요. 검색은 브라우저 안에서 처리되며 별도의 개인정보를 수집하지 않습니다.</p>
+    </details>
+  </div>
+</div>
+
+<script>
+var searchIndex = null;
+var fuse = null;
+
+function ensureFuseLoaded(cb) {
+  if (window.Fuse) return cb();
+  var s = document.createElement('script');
+  s.src = 'https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js';
+  s.onload = cb;
+  document.head.appendChild(s);
+}
+
+function ensureIndexLoaded(cb) {
+  if (searchIndex) return cb();
+  fetch('{{ "/search_index.json" | relative_url }}').then(function(r){ return r.json(); }).then(function(data){
+    searchIndex = data;
+    cb();
+  });
+}
+
+function doSearch() {
+  var q = document.getElementById('searchInput').value.trim();
+  var resultsEl = document.getElementById('search-results');
+  if (!q) { resultsEl.innerHTML = ''; document.getElementById('regionSection').style.display = ''; return; }
+
+  ensureFuseLoaded(function () {
+    ensureIndexLoaded(function () {
+      if (!fuse) {
+        fuse = new Fuse(searchIndex, { keys: ['n'], threshold: 0.32, minMatchCharLength: 1 });
+      }
+      var hits = fuse.search(q).slice(0, 30);
+      document.getElementById('regionSection').style.display = 'none';
+      if (hits.length === 0) {
+        resultsEl.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:30px 0;">검색 결과가 없어요. 단지명을 다시 확인해보세요.</p>';
+        return;
+      }
+      resultsEl.innerHTML = hits.map(function (h) {
+        var a = h.item;
+        var badge = a.d ? '<span class="apt-card-badge badge-ready">정보있음</span>' : '<span class="apt-card-badge badge-pending">준비중</span>';
+        return '<div class="search-result-item"><a href="{{ "/apt/" | relative_url }}' + a.s + '/">' +
+          '<span><span class="search-result-name">' + a.n + '</span><br><span class="search-result-loc">' + a.do + ' ' + a.sg + '</span></span>' +
+          badge + '</a></div>';
+      }).join('');
+    });
+  });
+}
+
+document.getElementById('searchBtn').addEventListener('click', doSearch);
+document.getElementById('searchInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') doSearch(); });
+</script>

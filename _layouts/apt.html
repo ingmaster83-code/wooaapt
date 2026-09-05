@@ -1,0 +1,86 @@
+---
+layout: default
+---
+<div class="apt-hero">
+  <div class="a-name">{{ page.aptName }}</div>
+  <div class="a-addr">{{ page.addr | default: page.doroAddr | default: page.doShort | append: ' ' | append: page.sigungu | append: ' ' | append: page.dong }}</div>
+  {% if page.hasDetail %}<span class="a-badge">{{ page.aptType | default: "공동주택" }}</span>{% endif %}
+</div>
+
+<div class="breadcrumb">
+  <a href="{{ '/' | relative_url }}">홈</a> ›
+  <a href="{{ '/region/' | relative_url }}{{ page.doShort }}/">{{ page.doShort }}</a> ›
+  <a href="{{ '/region/' | relative_url }}{{ page.doShort }}/{{ page.sigungu }}/">{{ page.sigungu }}</a> ›
+  <span>{{ page.aptName }}</span>
+</div>
+
+<div class="page-with-sidebar" style="margin-top:20px;">
+<div>
+
+  <div class="info-panel">
+    <h2>🏢 기본정보</h2>
+    {% if page.hasDetail %}
+    <div class="spec-grid">
+      {% if page.hoCnt %}<div class="spec-item"><div class="spec-label">세대수</div><div class="spec-value">{{ page.hoCnt }}세대</div></div>{% endif %}
+      {% if page.dongCnt %}<div class="spec-item"><div class="spec-label">동수</div><div class="spec-value">{{ page.dongCnt }}개동</div></div>{% endif %}
+      {% if page.usedate and page.usedate.size == 8 %}<div class="spec-item"><div class="spec-label">사용승인일</div><div class="spec-value">{{ page.usedate | slice: 0, 4 }}.{{ page.usedate | slice: 4, 2 }}.{{ page.usedate | slice: 6, 2 }}</div></div>{% endif %}
+      {% if page.heatType %}<div class="spec-item"><div class="spec-label">난방방식</div><div class="spec-value">{{ page.heatType }}</div></div>{% endif %}
+      {% if page.mgrType %}<div class="spec-item"><div class="spec-label">관리방식</div><div class="spec-value">{{ page.mgrType }}</div></div>{% endif %}
+      {% if page.hallType %}<div class="spec-item"><div class="spec-label">복도유형</div><div class="spec-value">{{ page.hallType }}</div></div>{% endif %}
+      {% if page.saleType %}<div class="spec-item"><div class="spec-label">분양형태</div><div class="spec-value">{{ page.saleType }}</div></div>{% endif %}
+      {% if page.topFloor %}<div class="spec-item"><div class="spec-label">최고층수</div><div class="spec-value">{{ page.topFloor }}층</div></div>{% endif %}
+      {% if page.tarea %}<div class="spec-item"><div class="spec-label">연면적</div><div class="spec-value">{{ page.tarea | round }}㎡</div></div>{% endif %}
+      {% if page.bcompany %}<div class="spec-item"><div class="spec-label">시공사</div><div class="spec-value">{{ page.bcompany }}</div></div>{% endif %}
+      {% if page.acompany %}<div class="spec-item"><div class="spec-label">시행사</div><div class="spec-value">{{ page.acompany }}</div></div>{% endif %}
+      {% if page.tel and page.tel != " " %}<div class="spec-item"><div class="spec-label">관리사무소</div><div class="spec-value">{{ page.tel }}</div></div>{% endif %}
+    </div>
+    {% else %}
+    <div class="pending-box">
+      📋 이 단지의 상세 기본정보는 아직 준비 중이에요.<br>
+      국토교통부 공공데이터를 순차적으로 수집하고 있으며, 곧 세대수·사용승인일·난방방식 등이 채워질 예정입니다.
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="ad-slot" style="margin:20px 0;text-align:center;">{% include ad.html %}</div>
+
+  <div class="info-panel">
+    <h2>💰 관리비 정보</h2>
+    <div class="pending-box">
+      💡 단지별 관리비(공용관리비·개별사용료·장기수선충당금) 정보는 순차적으로 추가될 예정이에요.<br>
+      먼저 확인이 필요하시면 <a href="https://www.k-apt.go.kr" target="_blank" rel="noopener">K-apt 공식 사이트</a>에서 조회할 수 있습니다.
+    </div>
+  </div>
+
+  <div class="notice-box" style="margin-top:14px;">
+    💡 본 정보는 국토교통부 공동주택관리정보시스템(K-apt) 공공데이터를 기반으로 하며, 실제 현황과 다를 수 있습니다. 정확한 내용은 관리사무소에 문의해주세요.
+  </div>
+
+  <div class="tips-panel">
+    <h3>💡 Tips</h3>
+    <ul>
+      <li>같은 이름의 단지가 여러 지역에 있을 수 있으니 주소를 꼭 확인하세요.</li>
+      <li>관리비는 계절(냉난방)과 세대 면적에 따라 차이가 클 수 있어요.</li>
+      <li>더 정확한 실시간 정보는 K-apt 공식 사이트에서도 확인할 수 있어요.</li>
+    </ul>
+  </div>
+
+  <div class="faq-section">
+    <h2>자주 묻는 질문</h2>
+    <details>
+      <summary>이 정보는 얼마나 정확한가요?</summary>
+      <p>국토교통부 공동주택관리정보시스템(K-apt)에 등록된 공공데이터를 기반으로 하며, 실제 단지 현황과 차이가 있을 수 있습니다. 정확한 정보는 관리사무소에 문의해주세요.</p>
+    </details>
+    <details>
+      <summary>기본정보가 "준비중"으로 나와요. 언제 채워지나요?</summary>
+      <p>전국 2만2천여 개 단지 정보를 순차적으로 수집하고 있어 시간이 걸리고 있어요. 매일 조금씩 업데이트되니 곧 확인하실 수 있습니다.</p>
+    </details>
+    <details>
+      <summary>이 사이트에 개인정보를 입력하나요?</summary>
+      <p>아니요. 별도의 회원가입이나 개인정보 입력 없이 누구나 무료로 열람할 수 있습니다.</p>
+    </details>
+  </div>
+
+</div>
+<aside class="tool-sidebar"></aside>
+</div>

@@ -1,0 +1,59 @@
+---
+layout: default
+---
+<div class="hero" style="padding:40px 20px 32px;">
+  <h1 style="font-size:1.6rem;">{{ page.doShort }} {{ page.sigungu }}<br><span class="accent">아파트 단지 목록</span></h1>
+  <p>총 {{ page.totalCount }}개 단지</p>
+</div>
+
+<div class="breadcrumb">
+  <a href="{{ '/' | relative_url }}">홈</a> ›
+  <a href="{{ '/region/' | relative_url }}">지역별</a> ›
+  <a href="{{ '/region/' | relative_url }}{{ page.doShort }}/">{{ page.doShort }}</a> ›
+  <span>{{ page.sigungu }}</span>
+</div>
+
+<div class="section">
+  <div class="filter-bar">
+    <input type="text" class="filter-input" id="aptFilter" placeholder="🔍 단지명으로 찾기 (예: 래미안, 자이...)">
+  </div>
+
+  <div class="ad-slot" style="margin:0 0 20px;text-align:center;">{% include ad.html %}</div>
+
+  <div class="apt-grid" id="aptGrid">
+    {% for a in page.apts %}
+    <a class="apt-card" data-name="{{ a.aptName }}" href="{{ '/apt/' | relative_url }}{{ a.slug }}/">
+      <div class="apt-card-name">{{ a.aptName }}</div>
+      <div class="apt-card-loc">{{ a.doShort }} {{ a.sigungu }} {{ a.dong }}</div>
+      <div class="apt-card-stats">
+        {% if a.hasDetail %}
+          {% if a.hoCnt %}<span>🏠 {{ a.hoCnt }}세대</span>{% endif %}
+          {% if a.dongCnt %}<span>🏢 {{ a.dongCnt }}개동</span>{% endif %}
+          <span class="apt-card-badge badge-ready">정보있음</span>
+        {% else %}
+          <span class="apt-card-badge badge-pending">기본정보 준비중</span>
+        {% endif %}
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  <p id="noResult" style="display:none;text-align:center;color:var(--text-muted);padding:30px 0;">검색 결과가 없어요.</p>
+</div>
+
+<script>
+(function(){
+  var input = document.getElementById('aptFilter');
+  var cards = document.querySelectorAll('#aptGrid .apt-card');
+  var noResult = document.getElementById('noResult');
+  input.addEventListener('input', function(){
+    var q = input.value.trim().toLowerCase();
+    var visible = 0;
+    cards.forEach(function(c){
+      var match = c.getAttribute('data-name').toLowerCase().indexOf(q) !== -1;
+      c.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+    noResult.style.display = visible === 0 ? 'block' : 'none';
+  });
+})();
+</script>

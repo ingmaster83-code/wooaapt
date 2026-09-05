@@ -1,0 +1,30 @@
+title: 우아아파트 - 전국 아파트 단지정보·관리비
+description: >-
+  전국 22,000여 개 아파트 단지의 기본정보와 관리비를 한 곳에서 확인하세요.
+  세대수·사용승인일·난방방식부터 관리비 비교까지.
+url: "https://wooaapt.wooahouse.com"
+baseurl: ""
+lang: ko
+timezone: Asia/Seoul
+author: WooaHouse
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+
+plugins:
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - scripts/
+  - "*.py"
+  - "*.log"
+  - "*.txt"
+  - README.md
+  - .gitignore
+  - vendor/
+  - .env

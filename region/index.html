@@ -1,0 +1,27 @@
+---
+layout: default
+title: 지역별 아파트 단지 찾기
+description: 전국 17개 시도별 아파트 단지 목록을 확인하세요.
+---
+
+<div class="hero">
+  <h1>지역별<br><span class="accent">아파트 단지 찾기</span></h1>
+  <p>시도를 선택하면 시군구별 아파트 목록을 볼 수 있어요.</p>
+</div>
+
+<div class="breadcrumb">
+  <a href="{{ '/' | relative_url }}">홈</a> › <span>지역별</span>
+</div>
+
+<div class="section">
+  <div class="region-grid">
+    {% assign dos = site.data.apt_by_do | sort %}
+    {% for pair in dos %}
+    <a class="region-btn" href="{{ '/region/' | relative_url }}{{ pair[0] }}/">
+      <span class="region-icon">📍</span>
+      {{ pair[0] }}
+      <div class="region-count">{{ pair[1].size }}개 단지</div>
+    </a>
+    {% endfor %}
+  </div>
+</div>

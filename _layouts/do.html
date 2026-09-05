@@ -1,0 +1,29 @@
+---
+layout: default
+---
+<div class="hero">
+  <h1>{{ page.doShort }} 아파트<br><span class="accent">단지정보</span></h1>
+  <p>{{ page.doShort }} 아파트 {{ page.totalCount }}개 단지를 시군구별로 확인하세요.</p>
+</div>
+
+<div class="breadcrumb">
+  <a href="{{ '/' | relative_url }}">홈</a> ›
+  <a href="{{ '/region/' | relative_url }}">지역별</a> ›
+  <span>{{ page.doShort }}</span>
+</div>
+
+<div class="section">
+  <h2 class="section-title">시군구 선택</h2>
+  <p class="section-sub">총 {{ page.sigunguList.size }}개 시군구 · {{ page.totalCount }}개 단지</p>
+  <div class="region-grid">
+    {% for s in page.sigunguList %}
+    <a class="region-btn" href="{{ '/region/' | relative_url }}{{ page.doShort }}/{{ s.name }}/">
+      <span class="region-icon">🏘️</span>
+      {{ s.name }}
+      <div class="region-count">{{ s.count }}개 단지</div>
+    </a>
+    {% endfor %}
+  </div>
+
+  <div class="ad-slot" style="margin:28px 0;text-align:center;">{% include ad.html %}</div>
+</div>
