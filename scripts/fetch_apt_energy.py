@@ -31,7 +31,7 @@ DEFAULT_DAILY_LIMIT = 900
 def fetch_one(kapt_code, attempt=1):
     params = {"serviceKey": SERVICE_KEY, "_type": "json", "kaptCode": kapt_code, "numOfRows": 12}
     try:
-        r = requests.get(BASE, params=params, timeout=20)
+        r = requests.get(BASE, params=params, timeout=90)
         r.raise_for_status()
         return r.json()
     except Exception as e:
