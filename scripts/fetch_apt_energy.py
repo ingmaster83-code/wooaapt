@@ -46,7 +46,18 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int, default=DEFAULT_DAILY_LIMIT)
     ap.add_argument("--probe", metavar="KAPT_CODE", help="필드명 확인용: 단지 1개 원본 응답만 출력하고 종료")
+    ap.add_argument("--probe-national", action="store_true", help="전국평균 API(파라미터 없음)로 서비스 자체 생존여부 확인")
     args = ap.parse_args()
+
+    if args.probe_national:
+        url = "https://apis.data.go.kr/1613000/ApHusEnergyUseInfoOfferServiceV2/getWntyAvrgEnergyUseAmountInfoSearchV2"
+        try:
+            r = requests.get(url, params={"serviceKey": SERVICE_KEY, "_type": "json", "numOfRows": 5}, timeout=60)
+            print("STATUS", r.status_code)
+            print(r.text[:2000])
+        except Exception as e:
+            print("ERR", e)
+        return
 
     if args.probe:
         raw = fetch_one(args.probe)
