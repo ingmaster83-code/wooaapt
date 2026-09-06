@@ -1,0 +1,22 @@
+name: (임시) 에너지 API 필드 확인용 프로브
+
+on:
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 패키지 설치
+        run: pip install -r scripts/requirements.txt
+
+      - name: 프로브 실행
+        run: python scripts/fetch_apt_energy.py --probe A10021295
+        env:
+          DATA_GO_KR_API_KEY: ${{ secrets.DATA_GO_KR_API_KEY }}
