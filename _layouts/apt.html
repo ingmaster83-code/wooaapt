@@ -45,11 +45,23 @@ layout: default
   <div class="ad-slot" style="margin:20px 0;text-align:center;">{% include ad.html %}</div>
 
   <div class="info-panel">
-    <h2>💰 관리비 정보</h2>
+    <h2>💡 관리비(에너지 사용료) 정보</h2>
+    {% if page.hasEnergy %}
+    <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:12px;">{{ page.energyMonth }} 기준 · 국토교통부 K-apt 공동주택관리정보시스템</p>
+    <div class="spec-grid">
+      {% if page.electAmt != "" %}<div class="spec-item"><div class="spec-label">⚡ 전기료</div><div class="spec-value">{{ page.electAmt }}</div></div>{% endif %}
+      {% if page.waterCoolAmt != "" %}<div class="spec-item"><div class="spec-label">🚰 수도료</div><div class="spec-value">{{ page.waterCoolAmt }}</div></div>{% endif %}
+      {% if page.heatAmt != "" %}<div class="spec-item"><div class="spec-label">🔥 난방비</div><div class="spec-value">{{ page.heatAmt }}</div></div>{% endif %}
+      {% if page.waterHotAmt != "" %}<div class="spec-item"><div class="spec-label">🚿 급탕비</div><div class="spec-value">{{ page.waterHotAmt }}</div></div>{% endif %}
+      {% if page.gasAmt != "" %}<div class="spec-item"><div class="spec-label">🔵 가스비</div><div class="spec-value">{{ page.gasAmt }}</div></div>{% endif %}
+    </div>
+    <p style="margin-top:12px;font-size:.8rem;color:var(--text-muted);">※ 단지 전체 공용 에너지 사용료 합계이며, 세대별 관리비 고지 금액과는 다릅니다. 항목별 상세 관리비(공용관리비·장기수선충당금 등)는 <a href="https://www.k-apt.go.kr" target="_blank" rel="noopener">K-apt 공식 사이트</a>에서 확인할 수 있습니다.</p>
+    {% else %}
     <div class="pending-box">
-      💡 단지별 관리비(공용관리비·개별사용료·장기수선충당금) 정보는 순차적으로 추가될 예정이에요.<br>
+      💡 이 단지의 에너지 사용료 정보는 아직 준비 중이에요(관리사무소 미보고 또는 순차 수집 중).<br>
       먼저 확인이 필요하시면 <a href="https://www.k-apt.go.kr" target="_blank" rel="noopener">K-apt 공식 사이트</a>에서 조회할 수 있습니다.
     </div>
+    {% endif %}
   </div>
 
   <div class="notice-box" style="margin-top:14px;">

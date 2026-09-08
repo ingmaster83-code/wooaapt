@@ -26,6 +26,11 @@ jobs:
         env:
           DATA_GO_KR_API_KEY: ${{ secrets.DATA_GO_KR_API_KEY }}
 
+      - name: 단지 에너지 사용료(관리비) 점진적 수집 (하루 할당량)
+        run: python scripts/fetch_apt_energy.py
+        env:
+          DATA_GO_KR_API_KEY: ${{ secrets.DATA_GO_KR_API_KEY }}
+
       - name: 페이지용 데이터 재생성
         run: python scripts/process_data.py
 

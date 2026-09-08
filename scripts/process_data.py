@@ -19,6 +19,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 ROOT = Path(__file__).parent.parent
 RAW_LIST = ROOT / "_rawdata" / "apt_list_raw.json"
 RAW_DETAIL = ROOT / "_rawdata" / "apt_detail.json"
+RAW_ENERGY = ROOT / "_rawdata" / "apt_energy.json"
 RAWDATA_DIR = ROOT / "_rawdata"
 SEARCH_INDEX_OUT = ROOT / "search_index.json"
 STATS_OUT = ROOT / "_rawdata" / "stats.json"
@@ -57,12 +58,47 @@ def slugify(text: str, extra: str) -> str:
     return f"{slug}-{h}" if slug else h
 
 
+def _won(v):
+    """원 단위 금액을 "12,345원" 형태로. 0/None은 빈 문자열(해당 항목 없음으로 처리)."""
+    if not v:
+        return ""
+    return f"{int(v):,}원"
+
+
+def _fmt_date(req_date):
+    """YYYYMM -> "2026년 7월"."""
+    if not req_date or len(req_date) != 6:
+        return ""
+    return f"{req_date[:4]}년 {int(req_date[4:6])}월"
+
+
+def energy_fields(e):
+    """apt_energy.json의 단지 1건(dict 또는 None)을 페이지 표시용 필드로 변환."""
+    if not e:
+        return {"hasEnergy": False}
+    return {
+        "hasEnergy": True,
+        "energyMonth": _fmt_date(e.get("reqDate")),
+        "heatAmt": _won(e.get("heat")),
+        "waterHotAmt": _won(e.get("waterHot")),
+        "gasAmt": _won(e.get("gas")),
+        "electAmt": _won(e.get("elect")),
+        "waterCoolAmt": _won(e.get("waterCool")),
+    }
+
+
 def main():
     raw = json.loads(RAW_LIST.read_text(encoding="utf-8"))
     detail_map = {}
     if RAW_DETAIL.exists():
         detail_map = json.loads(RAW_DETAIL.read_text(encoding="utf-8"))
     print(f"목록 {len(raw)}건, 상세정보 확보 {len(detail_map)}건 ({len(detail_map)*100//max(len(raw),1)}%)")
+
+    energy_map = {}
+    if RAW_ENERGY.exists():
+        raw_energy = json.loads(RAW_ENERGY.read_text(encoding="utf-8"))
+        energy_map = {k: v for k, v in raw_energy.items() if v}  # None(데이터없음) 항목 제외
+    print(f"에너지정보 확보 {len(energy_map)}건 ({len(energy_map)*100//max(len(raw),1)}%)")
 
     apts = []
     seen_slugs = Counter()
@@ -109,6 +145,7 @@ def main():
             "tel": detail.get("kaptTel"),
             "fax": detail.get("kaptFax"),
             "homepageUrl": detail.get("kaptUrl"),
+            **energy_fields(energy_map.get(code)),
         })
 
     print(f"제외: {skipped}건 (코드/이름/지역 누락)")
