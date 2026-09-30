@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  workflow_run:
+    # GITHUB_TOKEN으로 푸시하는 자동갱신 워크플로는 다른 on:push 워크플로를
+    # 못 깨우기 때문에(무한루프 방지 정책), 완료 이벤트로 따로 받아서 배포를 이어붙임.
+    workflows: ["단지 기본정보 자동 갱신"]
+    types: [completed]
 
 permissions:
   contents: read
@@ -16,6 +21,7 @@ concurrency:
 
 jobs:
   build:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
