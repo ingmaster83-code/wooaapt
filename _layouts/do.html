@@ -12,6 +12,8 @@ layout: default
   <span>{{ page.doShort }}</span>
 </div>
 
+<div class="page-with-sidebar" style="margin-top:20px;">
+<div class="side-main">
 <div class="section">
   <h2 class="section-title">시군구 선택</h2>
   <p class="section-sub">총 {{ page.sigunguList.size }}개 시군구 · {{ page.totalCount }}개 단지</p>
@@ -26,4 +28,7 @@ layout: default
   </div>
 
   <div class="ad-slot" style="margin:28px 0;text-align:center;">{% include ad.html %}</div>
+</div>
+</div>
+<aside class="tool-sidebar"></aside>
 </div>

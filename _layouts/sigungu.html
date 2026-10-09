@@ -13,6 +13,8 @@ layout: default
   <span>{{ page.sigungu }}</span>
 </div>
 
+<div class="page-with-sidebar" style="margin-top:20px;">
+<div class="side-main">
 <div class="section">
   <div class="filter-bar">
     <input type="text" class="filter-input" id="aptFilter" placeholder="🔍 단지명으로 찾기 (예: 래미안, 자이...)">
@@ -38,6 +40,9 @@ layout: default
     {% endfor %}
   </div>
   <p id="noResult" style="display:none;text-align:center;color:var(--text-muted);padding:30px 0;">검색 결과가 없어요.</p>
+</div>
+</div>
+<aside class="tool-sidebar"></aside>
 </div>
 
 <script>
