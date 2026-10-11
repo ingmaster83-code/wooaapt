@@ -83,10 +83,10 @@ def parse_items(root, kind):
 def fetch_one(kind, sgg, ym):
     rows, page = [], 1
     while True:
-        for attempt in range(5):
+        for attempt in range(6):
             try:
                 HTTP[0] += 1
-                r = sess.get(URLS[kind], params={"serviceKey": KEY, "LAWD_CD": sgg, "DEAL_YMD": ym, "numOfRows": ROWS, "pageNo": page}, timeout=40)
+                r = sess.get(URLS[kind], params={"serviceKey": KEY, "LAWD_CD": sgg, "DEAL_YMD": ym, "numOfRows": ROWS, "pageNo": page}, timeout=(15, 45))
                 if r.status_code == 429 or "LIMITED_NUMBER_OF_SERVICE_REQUESTS" in r.text:
                     raise QuotaExceeded()
                 if r.status_code != 200:
@@ -102,9 +102,9 @@ def fetch_one(kind, sgg, ym):
             except QuotaExceeded:
                 raise
             except Exception as e:
-                if attempt == 4:
+                if attempt == 5:
                     raise
-                time.sleep(2 * (attempt + 1))
+                time.sleep(3 * (attempt + 1))
         batch = parse_items(root, kind)
         rows.extend(batch)
         total = num(root.findtext(".//totalCount") or "0", int)
@@ -156,7 +156,7 @@ def main():
     ap.add_argument("--months-trade", type=int, default=36)
     ap.add_argument("--months-rent", type=int, default=24)
     ap.add_argument("--max-calls", type=int, default=9000)
-    ap.add_argument("--workers", type=int, default=6)
+    ap.add_argument("--workers", type=int, default=2)   # 공공 API 게이트웨이가 동시 접속이 많으면 연결을 끊는다(6개 병렬은 러너에서 ConnectTimeout)
     args = ap.parse_args()
     kinds = ["trade", "rent"] if args.kind == "both" else [args.kind]
     done = skipped = 0
