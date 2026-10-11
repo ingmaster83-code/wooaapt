@@ -1,0 +1,58 @@
+---
+layout: default
+---
+<div class="hero" style="padding:40px 20px 32px;">
+  <h1 style="font-size:1.6rem;">{{ page.doShort }} {{ page.sigungu }} {{ page.dong }}<br><span class="accent">아파트 실거래가</span></h1>
+  <p>실거래 신고 단지 {{ page.count }}곳</p>
+</div>
+
+<div class="breadcrumb">
+  <a href="{{ '/' | relative_url }}">홈</a> ›
+  <a href="{{ '/region/' | relative_url }}">지역별</a> ›
+  <a href="{{ '/region/' | relative_url }}{{ page.doShort }}/">{{ page.doShort }}</a> ›
+  <a href="{{ '/region/' | relative_url }}{{ page.doShort }}/{{ page.sigungu }}/">{{ page.sigungu }}</a> ›
+  <span>{{ page.dong }}</span>
+</div>
+
+<div class="page-with-sidebar" style="margin-top:20px;">
+<div class="side-main">
+<div class="section">
+  <p class="trade-sum">{{ page.summary }}</p>
+
+  <div class="ad-slot" style="margin:16px 0;text-align:center;">{% include ad.html %}</div>
+
+  <h2 class="section-title" style="margin-top:8px;">🏢 {{ page.dong }} 아파트 단지별 실거래</h2>
+  <div class="tbl-wrap"><table class="trade-tbl">
+    <thead><tr><th>단지</th><th>준공</th><th>12개월 매매</th><th>12개월 전월세</th><th>대표 평형 평균 매매가</th><th>최근 거래일</th></tr></thead>
+    <tbody>
+    {% for r in page.rows %}<tr><td><a href="{{ r.url | relative_url }}">{{ r.name }}</a>{% if r.hi > 0 %} <span class="hi-badge">신고가</span>{% endif %}</td><td>{% if r.by > 0 %}{{ r.by }}년{% else %}-{% endif %}</td><td>{{ r.n12 }}건</td><td>{{ r.nr12 }}건</td><td>{{ r.rep }}</td><td>{{ r.last }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+
+  {% if page.topList.size > 0 %}
+  <h2 class="section-title" style="margin-top:28px;">🏆 {{ page.dong }} 최근 3년 최고가 거래</h2>
+  <div class="tbl-wrap"><table class="trade-tbl">
+    <thead><tr><th>단지</th><th>평형</th><th>최고가</th><th>거래일</th></tr></thead>
+    <tbody>{% for t in page.topList %}<tr><td>{{ t.name }}</td><td>{{ t.label }}</td><td>{{ t.amt }}</td><td>{{ t.date }}</td></tr>
+    {% endfor %}</tbody>
+  </table></div>
+  {% endif %}
+
+  {% if page.neighbors.size > 0 %}
+  <h2 class="section-title" style="margin-top:28px;">📍 {{ page.sigungu }} 다른 동네 아파트 실거래</h2>
+  <div class="region-grid">
+    {% for n in page.neighbors %}<a class="region-btn" href="{{ '/region/' | relative_url }}{{ page.doShort }}/{{ page.sigungu }}/{{ n.name }}/"><span class="region-icon">🏘️</span>{{ n.name }}<div class="region-count">12개월 매매 {{ n.n12 }}건</div></a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="faq-section">
+    <h2>자주 묻는 질문</h2>
+    {% for f in page.faq %}<details><summary>{{ f.q }}</summary><p>{{ f.a }}</p></details>
+    {% endfor %}
+  </div>
+</div>
+</div>
+<aside class="tool-sidebar"></aside>
+</div>

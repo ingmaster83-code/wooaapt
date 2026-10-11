@@ -81,7 +81,7 @@ module Jekyll
   # ── 시군구 페이지 ──────────────────────────────────────
   class SigunguPageGenerator < Generator
     safe true
-    priority :normal
+    priority :low
 
     def generate(site)
       by_do = site.data['apt_by_do'] || {}
@@ -112,8 +112,15 @@ module Jekyll
       self.data['apts'] = apts.sort_by { |a| a['aptName'] }
       self.data['totalCount'] = apts.size
       self.data['layout'] = 'sigungu'
-      self.data['title'] = "#{do_short} #{sigungu} 아파트 단지 목록 (#{apts.size}개)"
-      self.data['description'] = "#{do_short} #{sigungu} 아파트 #{apts.size}개 단지의 세대수, 관리비, 기본정보를 확인하세요."
+      tsg = (site.data['trade_sg'] || {})["#{do_short}|#{sigungu}"]
+      self.data['trade'] = tsg
+      if tsg
+        self.data['title'] = "#{do_short} #{sigungu} 아파트 실거래가·단지 목록 (#{apts.size}개)"
+        self.data['description'] = "#{do_short} #{sigungu} 아파트 실거래가와 전월세 시세, 최근 12개월 매매 #{tsg['n12']}건. #{apts.size}개 단지의 세대수·관리비·기본정보를 확인하세요."
+      else
+        self.data['title'] = "#{do_short} #{sigungu} 아파트 단지 목록 (#{apts.size}개)"
+        self.data['description'] = "#{do_short} #{sigungu} 아파트 #{apts.size}개 단지의 세대수, 관리비, 기본정보를 확인하세요."
+      end
     end
   end
 
@@ -139,13 +146,20 @@ module Jekyll
       self.read_yaml(File.join(@base, '_layouts'), 'apt.html')
       self.data.merge!(a)
       self.data['layout'] = 'apt'
-      self.data['title'] = "#{a['aptName']} 정보 — 세대수·관리비·기본정보 | #{a['doShort']} #{a['sigungu']}"
+      tr = a['trade']
+      self.data['title'] = tr ? "#{a['aptName']} 실거래가·전세 시세·관리비 | #{a['doShort']} #{a['sigungu']} #{a['dong']}" : "#{a['aptName']} 정보 — 세대수·관리비·기본정보 | #{a['doShort']} #{a['sigungu']}"
       desc_bits = []
       desc_bits << "#{a['hoCnt'].to_i}세대" if a['hoCnt']
       desc_bits << "#{a['dongCnt']}개동" if a['dongCnt']
       desc_bits << a['heatType'] if a['heatType']
       extra = desc_bits.empty? ? '' : " (#{desc_bits.join(' · ')})"
-      self.data['description'] = "#{a['doShort']} #{a['sigungu']} #{a['aptName']}#{extra} 기본정보와 관리비를 확인하세요."
+      if tr && tr['n12'].to_i.positive?
+        self.data['description'] = "#{a['doShort']} #{a['sigungu']} #{a['aptName']} 실거래가(최근 12개월 매매 #{tr['n12']}건)와 전세·월세 시세#{extra}, 관리비를 확인하세요."
+      elsif tr
+        self.data['description'] = "#{a['doShort']} #{a['sigungu']} #{a['aptName']} 전월세 시세와 실거래 내역#{extra}, 관리비를 확인하세요."
+      else
+        self.data['description'] = "#{a['doShort']} #{a['sigungu']} #{a['aptName']}#{extra} 기본정보와 관리비를 확인하세요."
+      end
     end
   end
 end

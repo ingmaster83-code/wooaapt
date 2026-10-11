@@ -29,7 +29,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW_LIST = os.path.join(ROOT, "_rawdata", "apt_list_raw.json")
 ENERGY_CACHE = os.path.join(ROOT, "_rawdata", "apt_energy.json")
 
-SERVICE_KEY = os.environ.get("DATA_GO_KR_API_KEY") or "9490b1d34e92aa9e25b32a4cff1438fc7b9c71e5d332413916a391e867f61e86"
+SERVICE_KEY = os.environ.get("DATA_GO_KR_API_KEY") or sys.exit("환경변수 DATA_GO_KR_API_KEY 가 필요합니다(키를 코드에 넣지 마세요).")
 BASE = "https://apis.data.go.kr/1613000/ApHusEnergyUseInfoOfferServiceV2/getHsmpApHusUsgQtyInfoSearchV2"
 
 DEFAULT_DAILY_LIMIT = 200  # 단지당 최대 4콜(월 캐스케이드)까지 들 수 있어 900보다 낮게 잡음

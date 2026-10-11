@@ -18,6 +18,7 @@ plugins:
   - jekyll-seo-tag
 
 exclude:
+  - data/
   - Gemfile
   - Gemfile.lock
   - scripts/

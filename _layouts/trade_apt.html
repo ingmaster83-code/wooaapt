@@ -1,0 +1,48 @@
+---
+layout: default
+---
+<div class="apt-hero">
+  <div class="a-name">{{ page.aptName }}</div>
+  <div class="a-addr">{{ page.doShort }} {{ page.sigungu }} {{ page.dong }}{% if page.jibun != "" %} {{ page.jibun }}{% endif %}</div>
+  <span class="a-badge">아파트 실거래가</span>
+</div>
+
+<div class="breadcrumb">
+  <a href="{{ '/' | relative_url }}">홈</a> ›
+  <a href="{{ '/region/' | relative_url }}{{ page.doShort }}/">{{ page.doShort }}</a> ›
+  <a href="{{ '/region/' | relative_url }}{{ page.doShort }}/{{ page.sigungu }}/">{{ page.sigungu }}</a> ›
+  <a href="{{ '/region/' | relative_url }}{{ page.doShort }}/{{ page.sigungu }}/{{ page.dong }}/">{{ page.dong }}</a> ›
+  <span>{{ page.aptName }}</span>
+</div>
+
+<div class="page-with-sidebar" style="margin-top:20px;">
+<div>
+
+  <div class="info-panel">
+    <h2>🏢 단지 정보</h2>
+    <div class="spec-grid">
+      <div class="spec-item"><div class="spec-label">소재지</div><div class="spec-value">{{ page.doShort }} {{ page.sigungu }} {{ page.dong }}</div></div>
+      {% if page.builtYear and page.builtYear > 0 %}<div class="spec-item"><div class="spec-label">준공연도</div><div class="spec-value">{{ page.builtYear }}년</div></div>{% endif %}
+      <div class="spec-item"><div class="spec-label">최근 12개월 매매</div><div class="spec-value">{{ page.trade.n12 }}건</div></div>
+      <div class="spec-item"><div class="spec-label">최근 12개월 전월세</div><div class="spec-value">{{ page.trade.nr12 }}건</div></div>
+    </div>
+    <p class="trade-asof" style="margin-top:10px;">세대수·관리비 등 단지 기본정보는 국토부 K-apt 등록 단지(의무관리 대상)에 한해 제공되며, 이 단지는 실거래 신고 자료만 있습니다.</p>
+  </div>
+
+  <div class="ad-slot" style="margin:20px 0;text-align:center;">{% include ad.html %}</div>
+
+  {% include trade_section.html %}
+
+  <div class="notice-box" style="margin-top:14px;">
+    💡 본 정보는 국토교통부 실거래가 공개시스템 신고 자료를 기반으로 하며, 계약 후 최대 30일까지 신고가 지연될 수 있습니다. 매매·전세 계약 전에는 공인중개사와 등기부등본, 실제 호가를 함께 확인하세요.
+  </div>
+
+  <div class="faq-section">
+    <h2>자주 묻는 질문</h2>
+    {% for f in page.faq %}<details><summary>{{ f.q }}</summary><p>{{ f.a }}</p></details>
+    {% endfor %}
+  </div>
+
+</div>
+<aside class="tool-sidebar"></aside>
+</div>

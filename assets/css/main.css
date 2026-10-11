@@ -165,3 +165,17 @@ img { max-width: 100%; height: auto; }
 .page-with-sidebar > .side-main { min-width: 0; }
 .page-with-sidebar > .side-main > * { max-width: none; margin-left: 0; margin-right: 0; }
 .page-with-sidebar > .side-main > .section { padding-left: 0; padding-right: 0; }
+
+/* 실거래 표 */
+.trade-sum{font-size:.93rem;line-height:1.85;color:#374151;margin:6px 0 10px}
+.trade-asof{font-size:.8rem;color:var(--text-muted);margin-bottom:10px}
+.trade-h3{font-size:.98rem;font-weight:700;margin:18px 0 8px}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:6px}
+.trade-tbl{border-collapse:collapse;width:100%;min-width:520px;font-size:.86rem}
+.trade-tbl th{background:#F3F4F6;text-align:left;padding:8px 10px;font-weight:700;white-space:nowrap;border-bottom:1px solid #E5E7EB}
+.trade-tbl td{padding:8px 10px;border-bottom:1px solid #F1F5F9;vertical-align:top}
+.hi-badge{display:inline-block;background:#FEE2E2;color:#B91C1C;font-size:.68rem;font-weight:700;padding:1px 6px;border-radius:999px;margin-left:4px}
+.chip-row{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 4px}
+.chip{display:inline-block;padding:6px 12px;border:1px solid #E5E7EB;border-radius:999px;background:#fff;color:#111827;text-decoration:none;font-size:.85rem}
+.chip:hover{border-color:var(--primary);color:var(--primary)}
+.chip em{font-style:normal;color:#9CA3AF;font-size:.78rem;margin-left:3px}

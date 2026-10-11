@@ -8,3 +8,9 @@ Gemfile.lock
 __pycache__/
 
 .env
+
+data/
+
+# 실거래 가공 산출물(빌드 때마다 재생성)
+_rawdata/trades_*.json
+_rawdata/trade_meta.json

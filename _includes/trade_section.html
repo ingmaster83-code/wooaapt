@@ -1,0 +1,61 @@
+{% assign tr = page.trade %}{% if tr %}
+  <div class="info-panel" id="trade">
+    <h2>📈 {{ page.aptName }} 실거래가 (매매)</h2>
+    <p class="trade-sum">{{ tr.summary }}</p>
+    <p class="trade-asof">국토교통부 실거래가 공개시스템 신고 자료 · 최근 거래일 {{ tr.asOf }} 기준 · 계약 해제 거래 제외</p>
+
+    {% if tr.groups.size > 0 %}
+    <h3 class="trade-h3">평형별 최근 12개월 매매 요약</h3>
+    <div class="tbl-wrap"><table class="trade-tbl">
+      <thead><tr><th>평형</th><th>12개월 거래</th><th>평균</th><th>최저</th><th>3년 내 최고</th><th>가장 최근 거래</th></tr></thead>
+      <tbody>
+      {% for g in tr.groups %}<tr><td>{{ g.label }}</td><td>{{ g.n12 }}건</td><td>{{ g.avg }}</td><td>{{ g.min }}</td><td>{{ g.max }}</td><td>{{ g.last }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% endif %}
+
+    {% if tr.years.size > 1 %}
+    <h3 class="trade-h3">연도별 평균 매매가 (가장 많이 거래된 평형)</h3>
+    <div class="tbl-wrap"><table class="trade-tbl">
+      <thead><tr><th>연도</th><th>거래 건수</th><th>평균 거래가</th></tr></thead>
+      <tbody>{% for y in tr.years %}<tr><td>{{ y.year }}년</td><td>{{ y.n }}건</td><td>{{ y.avg }}</td></tr>
+      {% endfor %}</tbody>
+    </table></div>
+    {% endif %}
+
+    {% if tr.recent.size > 0 %}
+    <h3 class="trade-h3">최근 매매 거래 내역</h3>
+    <div class="tbl-wrap"><table class="trade-tbl">
+      <thead><tr><th>계약일</th><th>전용면적</th><th>층</th><th>거래금액</th></tr></thead>
+      <tbody>{% for r in tr.recent %}<tr><td>{{ r.date }}</td><td>{{ r.area }}㎡</td><td>{{ r.floor }}층</td><td>{{ r.amt }}</td></tr>
+      {% endfor %}</tbody>
+    </table></div>
+    {% endif %}
+  </div>
+
+  <div class="ad-slot" style="margin:20px 0;text-align:center;">{% include ad.html %}</div>
+
+  {% if tr.rents.size > 0 or tr.recentR.size > 0 %}
+  <div class="info-panel" id="rent">
+    <h2>🏠 {{ page.aptName }} 전세·월세 시세</h2>
+    {% if tr.rents.size > 0 %}
+    <h3 class="trade-h3">평형별 최근 12개월 전월세 요약</h3>
+    <div class="tbl-wrap"><table class="trade-tbl">
+      <thead><tr><th>평형</th><th>전세 거래</th><th>전세 평균</th><th>월세 거래</th><th>월세 평균(보증금 / 월세)</th></tr></thead>
+      <tbody>{% for g in tr.rents %}<tr><td>{{ g.label }}</td><td>{{ g.nj }}건</td><td>{{ g.avgj }}</td><td>{{ g.nw }}건</td><td>{{ g.avgw }}</td></tr>
+      {% endfor %}</tbody>
+    </table></div>
+    {% endif %}
+    {% if tr.recentR.size > 0 %}
+    <h3 class="trade-h3">최근 전월세 거래 내역</h3>
+    <div class="tbl-wrap"><table class="trade-tbl">
+      <thead><tr><th>계약일</th><th>전용면적</th><th>층</th><th>보증금</th><th>월세</th></tr></thead>
+      <tbody>{% for r in tr.recentR %}<tr><td>{{ r.date }}</td><td>{{ r.area }}㎡</td><td>{{ r.floor }}층</td><td>{{ r.dep }}</td><td>{{ r.mon }}</td></tr>
+      {% endfor %}</tbody>
+    </table></div>
+    {% endif %}
+    <p class="trade-asof" style="margin-top:10px;">전세 = 월세가 없는 전월세 계약 · 보증금은 전세금 또는 월세 보증금입니다.</p>
+  </div>
+  {% endif %}
+{% endif %}

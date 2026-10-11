@@ -1,12 +1,12 @@
 ---
 layout: default
-title: 우아아파트 - 전국 아파트 단지정보·관리비
-description: 전국 22,000여 개 아파트 단지의 세대수·사용승인일·난방방식 등 기본정보와 관리비를 한 곳에서 확인하세요.
+title: 우아아파트 - 전국 아파트 실거래가·전세 시세·관리비 조회
+description: 전국 아파트 단지의 실거래가(매매·전월세), 평형별 시세와 신고가, 관리비·기본정보를 한 곳에서 확인하세요.
 ---
 
 <div class="hero" id="search">
   <h1>우아아파트 · 우리 아파트,<br><span class="accent">얼마나 알고 계세요?</span></h1>
-  <p>전국 22,000여 개 아파트 단지의 기본정보와 관리비를<br>한 곳에서 무료로 확인하세요.</p>
+  <p>전국 아파트 단지의 실거래가·전세 시세·신고가와<br>기본정보·관리비를 한 곳에서 무료로 확인하세요.</p>
 
   <div class="search-wrap">
     <input type="text" class="search-input" id="searchInput" placeholder="아파트 이름으로 검색 (예: 래미안, 자이, 푸르지오...)">
@@ -34,6 +34,20 @@ description: 전국 22,000여 개 아파트 단지의 세대수·사용승인일
     {% endfor %}
   </div>
 </div>
+
+{% if site.data.shingoga_top.size > 0 %}
+<div class="section" style="padding-top:0;">
+  <div class="info-panel">
+    <h2>📈 최근 신고가 아파트 (3년 내 최고가 경신)</h2>
+    <div class="tbl-wrap"><table class="trade-tbl">
+      <thead><tr><th>계약일</th><th>단지</th><th>위치</th><th>평형·층</th><th>신고가</th><th>상승폭</th></tr></thead>
+      <tbody>{% for r in site.data.shingoga_top %}<tr><td>{{ r.date }}</td><td><a href="{{ r.url | relative_url }}">{{ r.name }}</a></td><td>{{ r.loc }}</td><td>{{ r.area }} · {{ r.floor }}층</td><td><b>{{ r.amt }}</b></td><td>+{{ r.diff }}</td></tr>
+      {% endfor %}</tbody>
+    </table></div>
+    <p style="margin-top:10px;"><a href="{{ '/shingoga/' | relative_url }}">전국 신고가 전체 보기 →</a></p>
+  </div>
+</div>
+{% endif %}
 
 <div class="section" style="padding-top:0;">
   <div class="info-panel">
@@ -85,8 +99,11 @@ function ensureFuseLoaded(cb) {
 
 function ensureIndexLoaded(cb) {
   if (searchIndex) return cb();
-  fetch('{{ "/search_index.json" | relative_url }}').then(function(r){ return r.json(); }).then(function(data){
-    searchIndex = data;
+  Promise.all([
+    fetch('{{ "/search_index.json" | relative_url }}').then(function(r){ return r.json(); }),
+    fetch('{{ "/search_trade.json" | relative_url }}').then(function(r){ return r.ok ? r.json() : []; }).catch(function(){ return []; })
+  ]).then(function(res){
+    searchIndex = res[0].concat(res[1]);
     cb();
   });
 }
@@ -109,8 +126,9 @@ function doSearch() {
       }
       resultsEl.innerHTML = hits.map(function (h) {
         var a = h.item;
-        var badge = a.d ? '<span class="apt-card-badge badge-ready">정보있음</span>' : '<span class="apt-card-badge badge-pending">준비중</span>';
-        return '<div class="search-result-item"><a href="{{ "/apt/" | relative_url }}' + a.s + '/">' +
+        var badge = a.u ? '<span class="apt-card-badge badge-ready">실거래가</span>' : (a.d ? '<span class="apt-card-badge badge-ready">정보있음</span>' : '<span class="apt-card-badge badge-pending">준비중</span>');
+        var href = a.u ? a.u : '{{ "/apt/" | relative_url }}' + a.s + '/';
+        return '<div class="search-result-item"><a href="' + href + '">' +
           '<span><span class="search-result-name">' + a.n + '</span><br><span class="search-result-loc">' + a.do + ' ' + a.sg + '</span></span>' +
           badge + '</a></div>';
       }).join('');

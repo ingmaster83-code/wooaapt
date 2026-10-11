@@ -31,6 +31,11 @@ jobs:
         env:
           DATA_GO_KR_API_KEY: ${{ secrets.DATA_GO_KR_API_KEY }}
 
+      - name: 실거래 확정 월 이력 보강 (월 1회 사실상 1개월분만 받음)
+        run: python scripts/fetch_trades.py --mode fill-hist
+        env:
+          DATA_GO_KR_API_KEY: ${{ secrets.DATA_GO_KR_API_KEY }}
+
       - name: 페이지용 데이터 재생성
         run: python scripts/process_data.py
 

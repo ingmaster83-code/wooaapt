@@ -16,6 +16,33 @@ layout: default
 <div class="page-with-sidebar" style="margin-top:20px;">
 <div class="side-main">
 <div class="section">
+  {% if page.trade %}
+  <div class="info-panel" style="margin-bottom:18px;">
+    <h2>📈 {{ page.sigungu }} 아파트 실거래 현황</h2>
+    <p class="trade-sum">{{ page.doShort }} {{ page.sigungu }}에서 실거래가가 신고된 아파트 단지는 {{ page.trade.cnt }}곳이고, 최근 12개월 동안 매매 {{ page.trade.n12 }}건이 신고됐습니다. 동네를 선택하면 단지별 실거래가와 전월세 시세를 볼 수 있습니다.</p>
+    {% if page.trade.dongs.size > 0 %}
+    <h3 class="trade-h3">동네별 아파트 실거래</h3>
+    <div class="chip-row">{% for d in page.trade.dongs %}<a class="chip" href="{{ '/region/' | relative_url }}{{ page.doShort }}/{{ page.sigungu }}/{{ d.name }}/">{{ d.name }} <em>{{ d.count }}</em></a>{% endfor %}</div>
+    {% endif %}
+    {% if page.trade.hot.size > 0 %}
+    <h3 class="trade-h3">최근 12개월 매매가 많이 신고된 단지</h3>
+    <div class="tbl-wrap"><table class="trade-tbl">
+      <thead><tr><th>단지</th><th>12개월 매매</th><th>대표 평형 평균 매매가</th><th>최근 거래일</th></tr></thead>
+      <tbody>{% for r in page.trade.hot %}<tr><td><a href="{{ r.url | relative_url }}">{{ r.name }}</a>{% if r.hi > 0 %} <span class="hi-badge">신고가</span>{% endif %}</td><td>{{ r.n12 }}건</td><td>{{ r.rep }}</td><td>{{ r.last }}</td></tr>
+      {% endfor %}</tbody>
+    </table></div>
+    {% endif %}
+    {% if page.trade.hi.size > 0 %}
+    <h3 class="trade-h3">최근 30일 신고가 (3년 내 최고가 경신)</h3>
+    <div class="tbl-wrap"><table class="trade-tbl">
+      <thead><tr><th>계약일</th><th>단지</th><th>평형·층</th><th>신고가</th><th>직전 최고가</th></tr></thead>
+      <tbody>{% for r in page.trade.hi %}<tr><td>{{ r.date }}</td><td><a href="{{ r.url | relative_url }}">{{ r.name }}</a></td><td>{{ r.area }} · {{ r.floor }}층</td><td><b>{{ r.amt }}</b></td><td>{{ r.prev }}</td></tr>
+      {% endfor %}</tbody>
+    </table></div>
+    {% endif %}
+  </div>
+  {% endif %}
+
   <div class="filter-bar">
     <input type="text" class="filter-input" id="aptFilter" placeholder="🔍 단지명으로 찾기 (예: 래미안, 자이...)">
   </div>

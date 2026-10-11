@@ -1,0 +1,43 @@
+---
+layout: default
+---
+<div class="hero" style="padding:40px 20px 32px;">
+  <h1 style="font-size:1.6rem;">{{ page.scope }} 아파트<br><span class="accent">신고가 (최근 30일)</span></h1>
+  <p>3년 내 최고가를 경신한 매매 거래 {{ page.count }}건 · {{ page.asOf }} 기준</p>
+</div>
+
+<div class="breadcrumb">
+  <a href="{{ '/' | relative_url }}">홈</a> ›
+  {% if page.scope != "전국" %}<a href="{{ '/shingoga/' | relative_url }}">신고가</a> › <span>{{ page.scope }}</span>{% else %}<span>신고가</span>{% endif %}
+</div>
+
+<div class="page-with-sidebar" style="margin-top:20px;">
+<div class="side-main">
+<div class="section">
+  <p class="trade-sum">신고가는 같은 단지·같은 전용면적(㎡)에서 최근 30일 안에 신고된 거래가 직전 3년간의 최고가를 넘은 경우를 말합니다. 국토교통부 실거래가 공개시스템 신고 자료를 기준으로 계산했으며, 신고 지연과 계약 해제로 실제와 차이가 있을 수 있습니다.</p>
+
+  <div class="ad-slot" style="margin:16px 0;text-align:center;">{% include ad.html %}</div>
+
+  {% if page.rows.size > 0 %}
+  <div class="tbl-wrap"><table class="trade-tbl">
+    <thead><tr><th>계약일</th><th>단지</th><th>위치</th><th>평형·층</th><th>신고가</th><th>직전 최고가</th><th>상승폭</th></tr></thead>
+    <tbody>
+    {% for r in page.rows %}<tr><td>{{ r.date }}</td><td><a href="{{ r.url | relative_url }}">{{ r.name }}</a></td><td>{{ r.loc }}</td><td>{{ r.area }} · {{ r.floor }}층</td><td><b>{{ r.amt }}</b></td><td>{{ r.prev }}</td><td>+{{ r.diff }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  {% else %}
+  <p>최근 30일 안에 신고가를 경신한 거래가 아직 없습니다.</p>
+  {% endif %}
+
+  {% if page.scope == "전국" %}
+  <h2 class="section-title" style="margin-top:28px;">시도별 신고가</h2>
+  <div class="region-grid">
+    {% for d in site.data.apt_by_do %}<a class="region-btn" href="{{ '/shingoga/' | relative_url }}{{ d[0] }}/"><span class="region-icon">📈</span>{{ d[0] }} 신고가</a>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+</div>
+<aside class="tool-sidebar"></aside>
+</div>

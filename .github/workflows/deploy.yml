@@ -27,6 +27,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 실거래 최근 4개월 수집 + 가공 (확정 월은 _rawdata/trade_hist 사용)
+        run: |
+          pip install requests
+          python scripts/fetch_trades.py --mode recent
+          python scripts/process_trades.py
+        env:
+          DATA_GO_KR_API_KEY: ${{ secrets.DATA_GO_KR_API_KEY }}
+
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
