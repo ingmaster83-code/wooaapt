@@ -32,7 +32,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: 실거래 최근 4개월 수집 + 가공 (확정 월은 _rawdata/trade_hist 사용)
+      - name: 실거래 최근 2개월 수집 + 가공 (확정 월은 _rawdata/trade_hist 사용)
         run: |
           pip install requests
           python scripts/fetch_trades.py --mode recent

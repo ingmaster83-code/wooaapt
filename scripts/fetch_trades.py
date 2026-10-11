@@ -10,6 +10,7 @@ fetch_trades.py - 국토교통부 아파트 실거래(매매·전월세) API를 
 """
 import argparse, gzip, json, os, re, sys, time
 import xml.etree.ElementTree as ET
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date
 from pathlib import Path
 
@@ -19,7 +20,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 ROOT = Path(__file__).parent.parent
 CACHE = ROOT / "data" / "trade_cache"
 HIST = ROOT / "_rawdata" / "trade_hist"   # 확정된(4개월 이상 지난) 월 데이터: git 에 보관
-RECENT_N = 4                              # 빌드마다 다시 받는 최근 개월 수
+RECENT_N = 2                              # 빌드마다 다시 받는 최근 개월 수(신고 지연 30일 → 2개월이면 충분, 일일 호출 한도 절약)
 SGG = json.loads((ROOT / "scripts" / "sgg_codes.json").read_text(encoding="utf-8"))
 
 URLS = {
@@ -155,6 +156,7 @@ def main():
     ap.add_argument("--months-trade", type=int, default=36)
     ap.add_argument("--months-rent", type=int, default=24)
     ap.add_argument("--max-calls", type=int, default=9000)
+    ap.add_argument("--workers", type=int, default=6)
     args = ap.parse_args()
     kinds = ["trade", "rent"] if args.kind == "both" else [args.kind]
     done = skipped = 0
@@ -181,34 +183,30 @@ def main():
             months, to_hist = all_months, False
         recent = set(all_months[:RECENT_N])
         for ym in months:
-            by_sgg = {}
             d = CACHE / kind / ym
             if not to_hist:
                 d.mkdir(parents=True, exist_ok=True)
-            for sgg in SGG:
-                f = d / f"{sgg}.json"
-                if not to_hist and f.exists() and ym not in recent:
-                    skipped += 1
-                    continue
-                if HTTP[0] >= args.max_calls:
-                    print(f"호출 {HTTP[0]}회 도달 — 중단(다음 실행에서 이어서). 받음 {done}, 건너뜀 {skipped}")
-                    sys.exit(2 if args.mode == "recent" else 0)   # 최근 월은 일부만 받으면 안 되므로 실패 처리
-                try:
-                    rows = fetch_one(kind, sgg, ym)
-                except QuotaExceeded:
-                    print(f"일일 호출 한도 도달(HTTP {HTTP[0]}회) — 중단(다음 실행에서 이어서). 받음 {done}, 건너뜀 {skipped}")
-                    sys.exit(2 if args.mode == "recent" else 0)
-                done += 1
-                if to_hist:
-                    by_sgg[sgg] = rows
-                else:
-                    f.write_text(json.dumps(rows, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-                if done % 100 == 0:
-                    print(f"[{kind}] {ym} 누적 {done}개 시군구-월 (HTTP {HTTP[0]})", flush=True)
-                time.sleep(0.05)
+            todo = [g for g in SGG if to_hist or ym in recent or not (d / f"{g}.json").exists()]
+            skipped += len(SGG) - len(todo)
+            if not todo:
+                continue
+            if HTTP[0] >= args.max_calls:
+                print(f"호출 {HTTP[0]}회 도달 — 중단(다음 실행에서 이어서). 받음 {done}, 건너뜀 {skipped}")
+                sys.exit(2 if args.mode == "recent" else 0)   # 최근 월은 일부만 받으면 안 되므로 실패 처리
+            try:
+                with ThreadPoolExecutor(max_workers=args.workers) as ex:
+                    results = list(ex.map(lambda g: (g, fetch_one(kind, g, ym)), todo))
+            except QuotaExceeded:
+                print(f"일일 호출 한도 도달(HTTP {HTTP[0]}회) — 중단(다음 실행에서 이어서). 받음 {done}, 건너뜀 {skipped}")
+                sys.exit(2 if args.mode == "recent" else 0)
+            done += len(results)
             if to_hist:
-                write_hist(kind, ym, by_sgg)
-                print(f"이력 저장: {kind} {ym}")
+                write_hist(kind, ym, {g: rows for g, rows in results})
+                print(f"이력 저장: {kind} {ym}", flush=True)
+            else:
+                for g, rows in results:
+                    (d / f"{g}.json").write_text(json.dumps(rows, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+                print(f"[{kind}] {ym} {len(results)}개 시군구 (HTTP {HTTP[0]})", flush=True)
     if args.mode == "fill-hist":
         prune_hist(args)
     print(f"완료: 받음 {done}, 건너뜀 {skipped}")
