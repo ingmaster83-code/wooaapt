@@ -286,7 +286,7 @@ module Jekyll
       site.pages << ShingogaPage.new(site, '전국', hi_all.first(300), meta)
       all.group_by { |t| t['doShort'] }.each do |do_short, list|
         rows = shingoga_rows(list, url_of)
-        site.pages << ShingogaPage.new(site, do_short, rows.first(200), meta) unless rows.empty?
+        site.pages << ShingogaPage.new(site, do_short, rows.first(200), meta)
       end
       site.data['shingoga_top'] = hi_all.first(10)
 
