@@ -186,6 +186,8 @@ module Jekyll
       data['dong'] = t['dong']
       data['jibun'] = t['jibun']
       data['builtYear'] = t['by']
+      hs = site.data['hak_slugs'] || {}
+      data['hakUrl'] = "https://wooahakgun.wooahouse.com/apt/#{hs["trade:#{slug}"]}/" if hs["trade:#{slug}"]
       data['trade'] = tr
       data['faq'] = tr['faq']
       seo("#{name} 실거래가·전세 시세 | #{t['doShort']} #{t['sigungu']} #{t['dong']} #{t['jibun']}", "#{t['doShort']} #{t['sigungu']} #{t['dong']} #{name} 아파트 실거래가 #{tr['n12'].to_i.positive? ? "(최근 12개월 #{tr['n12']}건)" : ''}와 전세·월세 시세, 평형별 최고·최저가를 확인하세요.")

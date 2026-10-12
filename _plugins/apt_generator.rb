@@ -146,6 +146,8 @@ module Jekyll
       self.read_yaml(File.join(@base, '_layouts'), 'apt.html')
       self.data.merge!(a)
       self.data['layout'] = 'apt'
+      hs = site.data['hak_slugs'] || {}
+      self.data['hakUrl'] = "https://wooahakgun.wooahouse.com/apt/#{hs["apt:#{a['slug']}"]}/" if hs["apt:#{a['slug']}"]
       tr = a['trade']
       self.data['title'] = tr ? "#{a['aptName']} 실거래가·전세 시세·관리비 | #{a['doShort']} #{a['sigungu']} #{a['dong']}" : "#{a['aptName']} 정보 — 세대수·관리비·기본정보 | #{a['doShort']} #{a['sigungu']}"
       desc_bits = []
