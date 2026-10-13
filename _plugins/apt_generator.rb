@@ -148,6 +148,8 @@ module Jekyll
       self.data['layout'] = 'apt'
       hs = site.data['hak_slugs'] || {}
       self.data['hakUrl'] = "https://wooahakgun.wooahouse.com/apt/#{hs["apt:#{a['slug']}"]}/" if hs["apt:#{a['slug']}"]
+      gs = site.data['gongsi_slugs'] || {}
+      self.data['gongsiUrl'] = "https://wooagongsi.wooahouse.com/g/#{gs["apt:#{a['slug']}"]}/" if gs["apt:#{a['slug']}"]
       tr = a['trade']
       self.data['title'] = tr ? "#{a['aptName']} 실거래가·전세 시세·관리비 | #{a['doShort']} #{a['sigungu']} #{a['dong']}" : "#{a['aptName']} 정보 — 세대수·관리비·기본정보 | #{a['doShort']} #{a['sigungu']}"
       desc_bits = []
