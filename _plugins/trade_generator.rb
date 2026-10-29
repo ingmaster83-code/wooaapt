@@ -140,6 +140,7 @@ module Jekyll
       {
         'summary' => s, 'groups' => groups, 'rents' => rents, 'recent' => recent, 'recentR' => recent_r, 'years' => years, 'faq' => faq.map { |q, a| { 'q' => q, 'a' => a } },
         'n12' => t['n12'], 'n36' => t['n36'], 'nr12' => t['nr12'], 'last' => t['last'], 'ratio' => ratio, 'hi' => hi.size,
+        'taxLinks' => (top ? TaxLinks.for_trade_man(top['avg12']) : nil), 'taxArea' => (top ? F.area_label(top['a'], top['py']) : nil), 'taxAvg' => (top ? F.man(top['avg12']) : nil),
         'asOf' => F.ymd(meta['latest'] || 0)
       }
     end
