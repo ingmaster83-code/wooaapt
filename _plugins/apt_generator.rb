@@ -146,6 +146,21 @@ module Jekyll
       self.read_yaml(File.join(@base, '_layouts'), 'apt.html')
       self.data.merge!(a)
       self.data['layout'] = 'apt'
+      # 조건별 허브(hall/heating/year/large/old, scripts/build_filter_pages.py 가 시도 단위까지 항상 생성) 링크
+      fl = []
+      dos = a['doShort'].to_s
+      hall = a['hallType'].to_s.strip
+      fl << ["#{dos} #{hall} 아파트", "/hall/#{hall}/#{dos}/"] if %w[계단식 복도식 혼합식].include?(hall)
+      heat = a['heatType'].to_s.strip
+      fl << ["#{dos} #{heat} 아파트", "/heating/#{heat}/#{dos}/"] if %w[지역난방 개별난방 중앙난방].include?(heat)
+      uy = a['usedate'].to_s[0, 4].to_i
+      if uy >= 1950 && uy <= Time.now.year
+        dec = uy < 1980 ? '1970년대이전' : "#{uy / 10 * 10}년대"
+        fl << ["#{dos} #{dec.sub('이전', ' 이전')} 준공 아파트", "/year/#{dec}/#{dos}/"]
+        fl << ["#{dos} 재건축 연한 30년 넘은 아파트", "/old/#{dos}/"] if uy <= Time.now.year - 30
+      end
+      fl << ["#{dos} 1,000세대 이상 대단지", "/large/1000/#{dos}/"] if a['hoCnt'].to_i >= 1000
+      self.data['filterLinks'] = fl
       hs = site.data['hak_slugs'] || {}
       self.data['hakUrl'] = "https://wooahakgun.wooahouse.com/apt/#{hs["apt:#{a['slug']}"]}/" if hs["apt:#{a['slug']}"]
       gs = site.data['gongsi_slugs'] || {}

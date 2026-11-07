@@ -35,6 +35,22 @@ description: 전국 아파트 단지의 실거래가(매매·전월세), 평형�
   </div>
 </div>
 
+<div class="section" style="padding-top:0;">
+  <div class="info-panel">
+    <h2>🔎 조건별 아파트 찾기</h2>
+    <p style="margin-bottom:10px;color:var(--text-muted);">계단식·복도식, 난방방식, 준공 연대, 대단지, 재건축 연한 30년, 시공사 조건으로 골라보세요.</p>
+    <div class="chip-row">
+      <a class="chip" href="{{ '/hall/계단식/' | relative_url }}">계단식 아파트</a>
+      <a class="chip" href="{{ '/hall/복도식/' | relative_url }}">복도식 아파트</a>
+      <a class="chip" href="{{ '/old/' | relative_url }}">재건축 연한 30년 넘은 아파트</a>
+      <a class="chip" href="{{ '/large/1000/' | relative_url }}">1,000세대 이상 대단지</a>
+      <a class="chip" href="{{ '/heating/지역난방/' | relative_url }}">지역난방 아파트</a>
+      <a class="chip" href="{{ '/builder/' | relative_url }}">시공사별</a>
+      <a class="chip" href="{{ '/filters/' | relative_url }}">조건별 전체 보기</a>
+    </div>
+  </div>
+</div>
+
 {% if site.data.shingoga_top.size > 0 %}
 <div class="section" style="padding-top:0;">
   <div class="info-panel">
