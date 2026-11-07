@@ -31,6 +31,12 @@ jobs:
         env:
           DATA_GO_KR_API_KEY: ${{ secrets.DATA_GO_KR_API_KEY }}
 
+      - name: 단지 공용관리비 항목·장기수선충당금 점진적 수집 (하루 할당량)
+        run: python scripts/fetch_apt_cost.py --limit 220 --threads 3
+        continue-on-error: true
+        env:
+          DATA_GO_KR_API_KEY: ${{ secrets.DATA_GO_KR_API_KEY }}
+
       - name: 실거래 확정 월 이력 보강 (월 1회 사실상 1개월분만 받음)
         run: python scripts/fetch_trades.py --mode fill-hist
         env:

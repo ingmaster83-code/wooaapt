@@ -67,6 +67,27 @@ layout: default
     {% endif %}
   </div>
 
+  {% if page.hasCost %}
+  <div class="info-panel">
+    <h2>🧾 {{ page.aptName }} 공용관리비 항목별 내역</h2>
+    <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:12px;">{{ page.costMonth }} 기준 · 단지 전체 월 공용관리비 · 국토교통부 K-apt 공동주택관리정보시스템</p>
+    <div class="spec-grid">
+      <div class="spec-item"><div class="spec-label">월 공용관리비 합계</div><div class="spec-value">{{ page.costTotal }}</div></div>
+      <div class="spec-item"><div class="spec-label">세대당 평균(단순 환산)</div><div class="spec-value">{{ page.costPerHo }}</div></div>
+      {% if page.levyTotal %}<div class="spec-item"><div class="spec-label">장기수선충당금 월 부과</div><div class="spec-value">{{ page.levyTotal }}{% if page.levyPerHo %} <small>(세대당 {{ page.levyPerHo }})</small>{% endif %}</div></div>{% endif %}
+      {% if page.resvTotal %}<div class="spec-item"><div class="spec-label">장기수선충당금 적립잔액</div><div class="spec-value">{{ page.resvTotal }}{% if page.resvPerHo %} <small>(세대당 {{ page.resvPerHo }})</small>{% endif %}</div></div>{% endif %}
+    </div>
+    <div class="tbl-wrap" style="margin-top:12px;"><table class="trade-tbl" style="min-width:420px;">
+      <thead><tr><th>항목</th><th>월 금액(단지 전체)</th><th>세대당</th><th>비중</th></tr></thead>
+      <tbody>
+      {% for r in page.costRows %}<tr><td>{{ r.n }}</td><td>{{ r.v }}</td><td>{{ r.p }}</td><td>{{ r.pct }}%</td></tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    <p style="margin-top:12px;font-size:.8rem;color:var(--text-muted);">※ 공용관리비 17개 항목(인건비·청소비·경비비 등)을 합산한 단지 전체 금액이며, 개별 사용료(전기·수도·난방 등)와 세대별 고지서 금액은 포함되지 않습니다. 세대당 금액은 총액을 세대수로 나눈 단순 평균으로 면적·사용량에 따라 실제와 다릅니다. 최신 보고월은 단지마다 다를 수 있습니다.</p>
+  </div>
+  {% endif %}
+
   {% include hak_link.html %}
   {% include gongsi_link.html %}
   {% include tax_link.html %}
@@ -96,6 +117,10 @@ layout: default
     <h2>자주 묻는 질문</h2>
     {% if page.trade %}{% for f in page.trade.faq %}<details><summary>{{ f.q }}</summary><p>{{ f.a }}</p></details>
     {% endfor %}{% endif %}
+    {% if page.hasCost %}<details>
+      <summary>{{ page.aptName }} 월 관리비는 얼마인가요?</summary>
+      <p>{{ page.costMonth }} 기준 이 단지의 월 공용관리비(인건비·청소비·경비비 등 17개 항목) 합계는 {{ page.costTotal }}, 세대수로 단순 나눈 세대당 평균은 약 {{ page.costPerHo }}입니다. 전기·수도·난방 같은 개별 사용료와 세대 면적별 부과액은 포함되지 않아 실제 고지서와 다릅니다.</p>
+    </details>{% endif %}
     <details>
       <summary>이 정보는 얼마나 정확한가요?</summary>
       <p>국토교통부 공동주택관리정보시스템(K-apt)에 등록된 공공데이터를 기반으로 하며, 실제 단지 현황과 차이가 있을 수 있습니다. 정확한 정보는 관리사무소에 문의해주세요.</p>

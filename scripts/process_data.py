@@ -20,6 +20,7 @@ ROOT = Path(__file__).parent.parent
 RAW_LIST = ROOT / "_rawdata" / "apt_list_raw.json"
 RAW_DETAIL = ROOT / "_rawdata" / "apt_detail.json"
 RAW_ENERGY = ROOT / "_rawdata" / "apt_energy.json"
+RAW_COST = ROOT / "_rawdata" / "apt_cost.json"
 RAWDATA_DIR = ROOT / "_rawdata"
 SEARCH_INDEX_OUT = ROOT / "search_index.json"
 STATS_OUT = ROOT / "_rawdata" / "stats.json"
@@ -87,6 +88,33 @@ def energy_fields(e):
     }
 
 
+COST_LABELS = [("lab", "인건비"), ("cln", "청소비"), ("grd", "경비비"), ("elv", "승강기 유지비"), ("rep", "수선비"), ("fac", "시설 유지비"),
+               ("con", "위탁관리수수료"), ("dis", "소독비"), ("hnw", "홈네트워크 유지비"), ("saf", "안전점검비"), ("dst", "재해예방비"),
+               ("tax", "제세공과금"), ("ofc", "제사무비"), ("veh", "차량 유지비"), ("clo", "피복비"), ("edu", "교육훈련비"), ("etc", "그 밖의 부대비용")]
+
+
+def cost_fields(c, ho):
+    """apt_cost.json 단지 1건 -> 공용관리비 항목표(월 총액·세대당·비중) + 장기수선충당금."""
+    if not c or not c.get("m"):
+        return {"hasCost": False}
+    try:
+        ho = int(ho or 0)
+    except (TypeError, ValueError):
+        ho = 0
+    total = sum(int(c.get(k) or 0) for k, _ in COST_LABELS)
+    if total <= 0 or ho <= 0:
+        return {"hasCost": False}
+    rows = [{"n": n, "v": f"{int(c[k]):,}원", "p": f"{int(c[k]) // ho:,}원", "pct": round(int(c[k]) * 100 / total, 1)}
+            for k, n in sorted(COST_LABELS, key=lambda x: -int(c.get(x[0]) or 0)) if int(c.get(k) or 0) > 0]
+    out = {"hasCost": True, "costMonth": _fmt_date(c["m"]), "costTotal": f"{total:,}원", "costPerHo": f"{total // ho:,}원",
+           "costPerHoNum": total // ho, "costRows": rows}
+    if int(c.get("levy") or 0) > 0:
+        out["levyTotal"] = f"{int(c['levy']):,}원"; out["levyPerHo"] = f"{int(c['levy']) // ho:,}원"
+    if int(c.get("resv") or 0) > 0:
+        out["resvTotal"] = f"{int(c['resv']):,}원"; out["resvPerHo"] = f"{int(c['resv']) // ho:,}원"
+    return out
+
+
 def main():
     raw = json.loads(RAW_LIST.read_text(encoding="utf-8"))
     detail_map = {}
@@ -99,6 +127,8 @@ def main():
         raw_energy = json.loads(RAW_ENERGY.read_text(encoding="utf-8"))
         energy_map = {k: v for k, v in raw_energy.items() if v}  # None(데이터없음) 항목 제외
     print(f"에너지정보 확보 {len(energy_map)}건 ({len(energy_map)*100//max(len(raw),1)}%)")
+    cost_map = json.loads(RAW_COST.read_text(encoding="utf-8")) if RAW_COST.exists() else {}
+    print(f"관리비 항목 확보 {sum(1 for v in cost_map.values() if v.get('m'))}건")
 
     apts = []
     seen_slugs = Counter()
@@ -146,6 +176,7 @@ def main():
             "fax": detail.get("kaptFax"),
             "homepageUrl": detail.get("kaptUrl"),
             **energy_fields(energy_map.get(code)),
+            **cost_fields(cost_map.get(code), detail.get("hoCnt")),
         })
 
     print(f"제외: {skipped}건 (코드/이름/지역 누락)")
