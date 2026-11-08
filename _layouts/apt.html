@@ -84,6 +84,7 @@ layout: default
       {% endfor %}
       </tbody>
     </table></div>
+    {% if page.costRankUrl %}<div class="chip-row" style="margin-top:12px;"><a class="chip" href="{{ page.costRankUrl | relative_url }}">{{ page.doShort }} {{ page.sigungu }} 관리비 순위 보기</a><a class="chip" href="{{ '/cost/' | relative_url }}">전국 관리비 순위</a></div>{% endif %}
     <p style="margin-top:12px;font-size:.8rem;color:var(--text-muted);">※ 공용관리비 17개 항목(인건비·청소비·경비비 등)을 합산한 단지 전체 금액이며, 개별 사용료(전기·수도·난방 등)와 세대별 고지서 금액은 포함되지 않습니다. 세대당 금액은 총액을 세대수로 나눈 단순 평균으로 면적·사용량에 따라 실제와 다릅니다. 최신 보고월은 단지마다 다를 수 있습니다.</p>
   </div>
   {% endif %}

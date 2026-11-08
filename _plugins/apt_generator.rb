@@ -161,6 +161,8 @@ module Jekyll
       end
       fl << ["#{dos} 1,000세대 이상 대단지", "/large/1000/#{dos}/"] if a['hoCnt'].to_i >= 1000
       self.data['filterLinks'] = fl
+      cs = site.data['cost_sgg'] || []
+      self.data['costRankUrl'] = "/cost/#{a['doShort']}/#{a['sigungu']}/" if a['hasCost'] && cs.include?("#{a['doShort']}|#{a['sigungu']}")
       st = (site.data['apt_stations'] || {})[a['slug']]
       self.data['nearStations'] = st if st
       hs = site.data['hak_slugs'] || {}

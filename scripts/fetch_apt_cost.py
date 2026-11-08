@@ -72,7 +72,7 @@ def _months(n=5):
     return out
 
 _sess = requests.Session()
-def call(ep, code, ym, tries=3):
+def call(ep, code, ym, tries=4):
     for a in range(tries):
         try:
             r = _sess.get(BASE + ep, params={"serviceKey": KEY, "kaptCode": code, "searchDate": ym, "_type": "json"}, timeout=60)
@@ -87,7 +87,8 @@ def call(ep, code, ym, tries=3):
             return it if isinstance(it, dict) else None
         except Exception as e:
             if a == tries - 1: raise
-            time.sleep(3)
+            # 게이트웨이 04(HTTP_ERROR)는 짧은 시간에 많이 호출하면 발생(2026-11-08 약 1,300콜 뒤 반복) → 길게 쉬었다 재시도
+            time.sleep(40 if "API 04" in str(e) else 3)
 
 def num(d, fields=None):
     if not d: return 0
