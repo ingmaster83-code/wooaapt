@@ -88,6 +88,20 @@ layout: default
   </div>
   {% endif %}
 
+  {% if page.nearStations.size > 0 %}
+  <div class="info-panel">
+    <h2>🚇 {{ page.aptName }} 근처 지하철역</h2>
+    <div class="tbl-wrap"><table class="trade-tbl" style="min-width:380px;">
+      <thead><tr><th>역</th><th>노선</th><th>직선거리</th><th>도보(추정)</th></tr></thead>
+      <tbody>
+      {% for s in page.nearStations %}<tr><td><a href="{{ '/station/' | append: s[1] | append: '/' | relative_url }}">{{ s[0] }}</a></td><td>{{ s[4] }}</td><td>{{ s[2] }}m</td><td>약 {{ s[3] }}분</td></tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    <p style="margin-top:10px;font-size:.8rem;color:var(--text-muted);">※ 직선거리 기준 추정치이며 실제 도보 경로·출구 위치에 따라 다릅니다.</p>
+  </div>
+  {% endif %}
+
   {% include hak_link.html %}
   {% include gongsi_link.html %}
   {% include tax_link.html %}

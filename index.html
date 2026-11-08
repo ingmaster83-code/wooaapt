@@ -49,6 +49,17 @@ description: 전국 아파트 단지의 실거래가(매매·전월세), 평형�
       <a class="chip" href="{{ '/filters/' | relative_url }}">조건별 전체 보기</a>
     </div>
   </div>
+  <div class="info-panel" style="margin-top:14px;">
+    <h2>🚇 역세권 아파트 찾기</h2>
+    <p style="margin-bottom:10px;color:var(--text-muted);">지하철역 반경 1km 안 아파트를 거리순으로 모아봤어요. 500m 이내 초역세권 단지도 바로 확인하세요.</p>
+    <div class="chip-row">
+      <a class="chip" href="{{ '/station/강남역/' | relative_url }}">강남역</a>
+      <a class="chip" href="{{ '/station/잠실역/' | relative_url }}">잠실역</a>
+      <a class="chip" href="{{ '/station/판교역/' | relative_url }}">판교역</a>
+      <a class="chip" href="{{ '/station/서면역/' | relative_url }}">서면역</a>
+      <a class="chip" href="{{ '/station/' | relative_url }}">전국 역세권 전체 보기</a>
+    </div>
+  </div>
 </div>
 
 {% if site.data.shingoga_top.size > 0 %}
